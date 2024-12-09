@@ -1,3 +1,9 @@
+/* To Run the code: 
+Method 1: - Install live server extension
+- Press the 'Go live' button on the bottom right corner of the codespace
+Method 2: - npm i vite (already installed ,but just in case)
+- npx vite
+ */
 import * as THREE from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
