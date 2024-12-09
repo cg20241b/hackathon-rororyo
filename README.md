@@ -3,7 +3,7 @@
 # Three.js Shader Hackathon Project
 **Project Demo**
 
-<video controls src="./2024-12-09 20-28-28.mp4" title="Hackhaton video demo"></video>
+[<video controls src="./2024-12-09 20-28-28.mp4" title="Hackhaton video demo"></video>](https://github.com/user-attachments/assets/19636ebc-d107-4f04-bd08-abe4f5f09163)
 
 **How to run the project:**
 1. Method 1: 
