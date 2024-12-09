@@ -1,7 +1,17 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/_wHFcbvB)
 [![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=17481069)
 # Three.js Shader Hackathon Project
+**Project Demo**
+<video controls src="2024-12-09 20-28-28.mp4" title="Hackhaton video demo"></video>
 
+**How to run the project:**
+1. Method 1: 
+   - Install live server extension
+   - Press the 'Go live' button on the bottom right corner of the codespace
+2. Method 2: 
+   - npm i vite (already installed ,but just in case)
+   - `npx vite`
+   
 **Objective:**  
 This project demonstrates custom vertex and fragment shaders using Three.js in a GitHub Codespace environment. The goal is to gain practical experience in shader-based materials, lighting, and object manipulation, culminating in an interactive 3D scene rendered in the browser.
 

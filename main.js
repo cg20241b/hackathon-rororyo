@@ -53,7 +53,7 @@ const lightCube = new THREE.Mesh(lightCubeGeometry, lightCubeMaterial);
 scene.add(lightCube);
 
 // Point Light inside the cube
-const cubeLight = new THREE.PointLight(0xffffff, 1, 5); 
+const cubeLight = new THREE.PointLight(0xffffff, 1, 3); 
 lightCube.add(cubeLight);
 
 // Custom Shaders
