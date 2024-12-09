@@ -9,19 +9,51 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Central Cube 
+// Movement Settings
+const CUBE_MOVE_SPEED = 0.1;
+const CAMERA_MOVE_SPEED = 0.1;
+
+// Keyboard State Tracking
+const keyState = {
+  w: false,
+  s: false,
+  a: false,
+  d: false
+};
+
+// Event Listeners for Keyboard
+window.addEventListener('keydown', (event) => {
+  switch(event.key.toLowerCase()) {
+    case 'w': keyState.w = true; break;
+    case 's': keyState.s = true; break;
+    case 'a': keyState.a = true; break;
+    case 'd': keyState.d = true; break;
+  }
+});
+
+window.addEventListener('keyup', (event) => {
+  switch(event.key.toLowerCase()) {
+    case 'w': keyState.w = false; break;
+    case 's': keyState.s = false; break;
+    case 'a': keyState.a = false; break;
+    case 'd': keyState.d = false; break;
+  }
+});
+
+// Central Cube (Light Source)
 const lightCubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 const lightCubeMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 const lightCube = new THREE.Mesh(lightCubeGeometry, lightCubeMaterial);
 scene.add(lightCube);
 
+// Point Light inside the cube
 const cubeLight = new THREE.PointLight(0xffffff, 1, 5); 
 lightCube.add(cubeLight);
 
 // Custom Shaders
 const lightPosition = new THREE.Vector3();
 const ambientIntensity = 0.219;
-// Alphabet Shader 
+
 const alphabetShaderMaterial = new THREE.ShaderMaterial({
   uniforms: {
     lightPos: { value: lightPosition },
@@ -57,7 +89,7 @@ const alphabetShaderMaterial = new THREE.ShaderMaterial({
       // Specular
       vec3 viewDir = normalize(-vPosition);
       vec3 reflectDir = reflect(-lightDir, vNormal);
-      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0); 
+      float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0); // Shininess for plastic
       vec3 specular = spec * vec3(1.0);
 
       // Combine
@@ -99,7 +131,7 @@ const digitShaderMaterial = new THREE.ShaderMaterial({
       float diff = max(dot(vNormal, lightDir), 0.0);
       vec3 diffuse = diff * baseColor;
 
-      // Specular 
+      // Specular (Metal-like)
       vec3 viewDir = normalize(-vPosition);
       vec3 halfDir = normalize(lightDir + viewDir);
       float spec = pow(max(dot(vNormal, halfDir), 0.0), 64.0); // Higher shininess for metal
@@ -111,6 +143,7 @@ const digitShaderMaterial = new THREE.ShaderMaterial({
   `,
 });
 
+// Load fonts and create text meshes
 const fontLoader = new FontLoader();
 fontLoader.load('node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
   // 'i' Text Mesh
@@ -145,14 +178,31 @@ fontLoader.load('node_modules/three/examples/fonts/helvetiker_regular.typeface.j
 });
 
 camera.position.z = 10;
-// Animation
+
+// Animation loop
 function animate() {
   requestAnimationFrame(animate);
+
+  // Cube Movement
+  if (keyState.w) {
+    lightCube.position.y += CUBE_MOVE_SPEED;
+  }
+  if (keyState.s) {
+    lightCube.position.y -= CUBE_MOVE_SPEED;
+  }
+
+  // Camera Movement
+  if (keyState.a) {
+    camera.position.x -= CAMERA_MOVE_SPEED;
+  }
+  if (keyState.d) {
+    camera.position.x += CAMERA_MOVE_SPEED;
+  }
 
   // Update light position
   lightPosition.copy(lightCube.position);
 
-// proving it's cube
+  // Dynamic lighting efffects
   lightCube.rotation.x += 0.01;
   lightCube.rotation.y += 0.01;
 
