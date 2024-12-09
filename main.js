@@ -54,45 +54,59 @@ lightCube.add(cubeLight);
 const lightPosition = new THREE.Vector3();
 const ambientIntensity = 0.219;
 
+
+// Alphabet Shader Material (Plastic-like Surface)
 const alphabetShaderMaterial = new THREE.ShaderMaterial({
   uniforms: {
+    // Dynamic light calculations
     lightPos: { value: lightPosition },
+    // Base illumination
     ambientIntensity: { value: ambientIntensity },
+    // material base color (fav color )
     baseColor: { value: new THREE.Color(0xff7f50) },
   },
   vertexShader: `
-    varying vec3 vNormal;
-    varying vec3 vPosition;
+  // varying variables to pass to fragment shader
+    varying vec3 vNormal; //vertex normal
+    varying vec3 vPosition; //vertex position
+
     void main() {
+    // transforms from normal space to the view space 
       vNormal = normalMatrix * normal;
+    // transforms the vertex position to view space
       vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
+    // final vertex position in clip space
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `,
   fragmentShader: `
-    uniform vec3 lightPos;
-    uniform float ambientIntensity;
-    uniform vec3 baseColor;
+    // uniform variables from CPU-side
+    uniform vec3 lightPos; // light source position 
+    uniform float ambientIntensity; //base ambient light intesinty level
+    uniform vec3 baseColor; //base material color (fav color)
 
-    varying vec3 vNormal;
-    varying vec3 vPosition;
+    // interpolated inputs from vertex shader
+    varying vec3 vNormal;         // interpolated surface normal
+    varying vec3 vPosition;       // interpolated vertex position
 
     void main() {
-      // Ambient
+      // Ambient lighthing calculation. Provides base illumination despite light direction to ensure minimum visible brightness across the surface
       vec3 ambient = ambientIntensity * baseColor;
 
-      // Diffuse
-      vec3 lightDir = normalize(lightPos - vPosition);
-      float diff = max(dot(vNormal, lightDir), 0.0);
-      vec3 diffuse = diff * baseColor;
+      // Diffuse ligthing calculation. Simulates how light interacts with a  surface. Intensity depends on angle between light and surface normal
+      vec3 lightDir = normalize(lightPos - vPosition);  // Light direction vector
+      float diff = max(dot(vNormal, lightDir), 0.0);   // Cosine of angle, clamped to positive
+      vec3 diffuse = diff * baseColor;                 // Diffuse contribution
 
-      // Specular
-      vec3 viewDir = normalize(-vPosition);
-      vec3 reflectDir = reflect(-lightDir, vNormal);
+      // Specular Lighting Calculation (Plastic-like). It will simulate reflective highlights, mimicking a plastic surface
+      vec3 viewDir = normalize(-vPosition); //view direction (towards the camera)
+      vec3 reflectDir = reflect(-lightDir, vNormal); //reflection vector (perfectly reflected)
+
+      // Specular intensity using Blinn-Phong reflection model
       float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0); // Shininess for plastic
-      vec3 specular = spec * vec3(1.0);
+      vec3 specular = spec * vec3(1.0);   // White specular highlights
 
-      // Combine
+      // Combine the final color composition (ambient,diffuse,specular)
       gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
     }
   `,
@@ -101,43 +115,53 @@ const alphabetShaderMaterial = new THREE.ShaderMaterial({
 // Digit Shader 
 const digitShaderMaterial = new THREE.ShaderMaterial({
   uniforms: {
+    // Dynamic light calculations  
     lightPos: { value: lightPosition },
+    // Base illumination
     ambientIntensity: { value: ambientIntensity },
+    // Base color material (complement fav color )
     baseColor: { value: new THREE.Color(0x0080af) },
   },
   vertexShader: `
+  // varying variables to pass the data from vertex shader to fragment shader 
     varying vec3 vNormal;
     varying vec3 vPosition;
+
     void main() {
+      // Transform normal to view space using normal matrix to handle non-uniform scaling and rotations
       vNormal = normalMatrix * normal;
+      // Transform vertex position to view space
       vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
+      // Final vertex position in clip space
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `,
   fragmentShader: `
-    uniform vec3 lightPos;
-    uniform float ambientIntensity;
-    uniform vec3 baseColor;
+    // Uniform variables from CPU-side
+    uniform vec3 lightPos;  // light source position
+    uniform float ambientIntensity; // base ambient light intesinty level
+    uniform vec3 baseColor; // base material color (complement fav color)
 
+    // interpolated inputs from vertex shader
     varying vec3 vNormal;
     varying vec3 vPosition;
 
     void main() {
-      // Ambient
+      // Ambient lighthing calculation. Provides base illumination despite light direction to ensure minimum visible brightness across the surface
       vec3 ambient = ambientIntensity * baseColor;
 
-      // Diffuse
-      vec3 lightDir = normalize(lightPos - vPosition);
-      float diff = max(dot(vNormal, lightDir), 0.0);
-      vec3 diffuse = diff * baseColor;
+      // Diffuse ligthing calculation. Simulates how light interacts with a  surface. Intensity depends on angle between light and surface normal
+      vec3 lightDir = normalize(lightPos - vPosition); // light direction vector 
+      float diff = max(dot(vNormal, lightDir), 0.0); // cosine of angle ,clamped to positive
+      vec3 diffuse = diff * baseColor; //final diffuse calculation
 
-      // Specular (Metal-like)
-      vec3 viewDir = normalize(-vPosition);
-      vec3 halfDir = normalize(lightDir + viewDir);
+      // Specular (Metal-like).Simulates reflective highlights, so it mimmicks metal behaviour of reflecting light
+      vec3 viewDir = normalize(-vPosition); //make the object face towards the camera
+      vec3 halfDir = normalize(lightDir + viewDir); //half angle vector for speculer
       float spec = pow(max(dot(vNormal, halfDir), 0.0), 64.0); // Higher shininess for metal
-      vec3 specular = spec * baseColor;
+      vec3 specular = spec * baseColor; //final specular calculation
 
-      // Combine
+      // Combining all the necessary ligthings to receive final color
       gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
     }
   `,
@@ -205,7 +229,7 @@ function animate() {
   // Dynamic lighting efffects
   lightCube.rotation.x += 0.01;
   lightCube.rotation.y += 0.01;
-
+  // render the scene and camera
   renderer.render(scene, camera);
 }
 animate();
