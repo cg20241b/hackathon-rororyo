@@ -29,7 +29,7 @@ fontLoader.load('node_modules/three/examples/fonts/helvetiker_regular.typeface.j
     bevelSize: 0.03,
     bevelSegments: 5,
   });
-  const textMaterialI = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  const textMaterialI = new THREE.MeshStandardMaterial({ color: 0xff7f50  });
   const textMeshI = new THREE.Mesh(textGeometryI, textMaterialI);
   textMeshI.position.set(-5, 0, 0); 
   scene.add(textMeshI);
@@ -45,7 +45,7 @@ fontLoader.load('node_modules/three/examples/fonts/helvetiker_regular.typeface.j
     bevelSize: 0.03,
     bevelSegments: 5,
   });
-  const textMaterial9 = new THREE.MeshStandardMaterial({ color: 0xffffff });
+  const textMaterial9 = new THREE.MeshStandardMaterial({ color: 0x0080af });
   const textMesh9 = new THREE.Mesh(textGeometry9, textMaterial9);
   textMesh9.position.set(5, 0, 0); 
   scene.add(textMesh9);
